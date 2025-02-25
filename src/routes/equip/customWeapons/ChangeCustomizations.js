@@ -21,6 +21,7 @@ function ChangeCustomizations({
   onCustomizationRemove,
   currentCustomizations,
   selectedCategory,
+  isSecondForm,
 }) {
   const { t } = useTranslate();
 
@@ -127,6 +128,7 @@ function ChangeCustomizations({
                     )}
                   </>
                 }
+                disabled={isSecondForm && customization.name === "weapon_customization_transforming"}
                 onDelete={() => onCustomizationRemove(customization)}
                 color="primary"
               />
