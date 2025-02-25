@@ -30,6 +30,7 @@ import { useTranslate } from "../../translation/translate";
 import CustomHeaderAlt from '../../components/common/CustomHeaderAlt';
 import CopyToClipboard from '../../components/common/CopyToClipboard';
 import { useCustomTheme } from "../../hooks/useCustomTheme";
+import CustomWeapons from "../equip/customWeapons/CustomWeapons";
 
 const powerPMs = {
   minor: 20,
@@ -112,6 +113,12 @@ function RitualsProjects() {
         <Grid container spacing={1} sx={{ marginBottom: 3, marginTop: 1 }}>
           <Grid item xs={12}>
             <Weapons />
+          </Grid>
+        </Grid>
+
+        <Grid container spacing={1} sx={{ marginBottom: 3, marginTop: 1 }}>
+          <Grid item xs={12}>
+            <CustomWeapons />
           </Grid>
         </Grid>
 
