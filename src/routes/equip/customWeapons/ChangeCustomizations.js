@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Grid,
-  Paper,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Button,
   Chip,
-  Typography,
-  Divider,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
@@ -32,22 +29,29 @@ function ChangeCustomizations({
     // Prevent selecting 'powerful' for arcane or dagger weapons
     if (
       custom.name === "weapon_customization_powerful" &&
-      (selectedCategory === "weapon_category_arcane" || selectedCategory === "weapon_category_dagger")
+      (selectedCategory === "weapon_category_arcane" ||
+        selectedCategory === "weapon_category_dagger")
     ) {
       return false;
     }
-  
+
     // Prevent 'quick' and 'powerful' from coexisting
     if (
       (custom.name === "weapon_customization_powerful" &&
-        currentCustomizations.some((c) => c.name === "weapon_customization_quick")) ||
+        currentCustomizations.some(
+          (c) => c.name === "weapon_customization_quick"
+        )) ||
       (custom.name === "weapon_customization_quick" &&
-        currentCustomizations.some((c) => c.name === "weapon_customization_powerful"))
+        currentCustomizations.some(
+          (c) => c.name === "weapon_customization_powerful"
+        ))
     ) {
       return false;
     }
-  
-    return !currentCustomizations.some((selected) => selected.name === custom.name);
+
+    return !currentCustomizations.some(
+      (selected) => selected.name === custom.name
+    );
   });
 
   const totalCustomizationCost = currentCustomizations.reduce(
@@ -67,7 +71,7 @@ function ChangeCustomizations({
     totalCustomizationCost + selectedCustomizationCost > 3;
 
   return (
-    <Grid container spacing={2}>
+    <Grid container item xs={12} spacing={1}>
       {/* Customization Selection */}
       <Grid item xs={10}>
         <FormControl fullWidth>
@@ -100,7 +104,7 @@ function ChangeCustomizations({
           variant="contained"
           onClick={onCustomizationAdd}
           disabled={isButtonDisabled || !selectedCustomization}
-          sx={{ height: "100%" }}
+          sx={{ height: "100%", width: "100%" }}
         >
           {"+"}
         </Button>

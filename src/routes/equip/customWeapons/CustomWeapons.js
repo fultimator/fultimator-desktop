@@ -5,6 +5,7 @@ import ChangeCategory from "./ChangeCategory";
 import ChangeRange from "./ChangeRange";
 import ChangeAccuracyCheck from "./ChangeAccuracyCheck";
 import ChangeCustomizations from "./ChangeCustomizations";
+import ChangeType from "./ChangeType";
 import { customizations } from "./libs.js";
 import { useTranslate } from "../../../translation/translate";
 import CustomHeaderAlt from "../../../components/common/CustomHeaderAlt";
@@ -24,6 +25,8 @@ function CustomWeapons() {
   });
   const [selectedCustomization, setSelectedCustomization] = useState(null);
   const [currentCustomizations, setCurrentCustomizations] = useState([]);
+  const [selectedType, setSelectedType] = useState("physical");
+  const [canSelectType, setCanSelectType] = useState(false);
 
   const [martial, setMartial] = useState(false);
   const [damageBonus, setDamageBonus] = useState(false);
@@ -65,6 +68,10 @@ function CustomWeapons() {
     setSelectedAccuracyCheck(newValue);
   };
 
+  const handleTypeChange = (event) => {
+    setSelectedType(event.target.value);
+  };
+
   const handleCustomizationAdd = () => {
     const customization = customizations.find(
       (custom) => custom.name === selectedCustomization
@@ -99,6 +106,11 @@ function CustomWeapons() {
       return; // Do nothing
     }
 
+    // If elemental customization is added, make type selection available
+    if (customization.name === "weapon_customization_elemental") {
+      setCanSelectType(true);
+    }
+
     // Check if adding the customization exceeds the allowed customization points
     if (
       currentCustomizations.reduce((total, c) => total + c.customCost, 0) +
@@ -116,6 +128,11 @@ function CustomWeapons() {
     setCurrentCustomizations((prev) =>
       prev.filter((item) => item.name !== customization.name)
     );
+    // If elemental customization is removed, disable type selection
+    if (customization.name === "weapon_customization_elemental") {
+      setCanSelectType(false);
+      setSelectedType("physical");
+    }
   };
 
   const handleClearFields = () => {
@@ -131,6 +148,8 @@ function CustomWeapons() {
     setSelectedAccuracyCheck({ att1: "dexterity", att2: "insight" });
     setCurrentCustomizations([]);
     setSelectedCustomization(null);
+    setSelectedType("physical");
+    setCanSelectType(false);
   };
 
   return (
@@ -171,15 +190,22 @@ function CustomWeapons() {
                 onChange={handleAccuracyCheckChange}
               />
             </Grid>
+            {/* Change Customizations */}
+            <ChangeCustomizations
+              selectedCustomization={selectedCustomization}
+              setSelectedCustomization={setSelectedCustomization}
+              onCustomizationAdd={handleCustomizationAdd}
+              onCustomizationRemove={handleCustomizationRemove}
+              currentCustomizations={currentCustomizations}
+              selectedCategory={selectedCategory}
+            />
+
+            {/* Change Type */}
             <Grid item xs={12}>
-              {/* Change Customizations */}
-              <ChangeCustomizations
-                selectedCustomization={selectedCustomization}
-                setSelectedCustomization={setSelectedCustomization}
-                onCustomizationAdd={handleCustomizationAdd}
-                onCustomizationRemove={handleCustomizationRemove}
-                currentCustomizations={currentCustomizations}
-                selectedCategory={selectedCategory}
+              <ChangeType
+                value={selectedType}
+                onChange={handleTypeChange}
+                disabled={!canSelectType}
               />
             </Grid>
             <Grid item xs={12}>
