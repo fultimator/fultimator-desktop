@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
+import {useFoldersStore} from '../../stores/folderStore.js';
 import NpcCard from "./NpcCard";
 import NpcListItem from "./NpcListItem";
 import { useNpcFiltersStore } from "./stores/npcFiltersStore";
-import { useNpcFoldersStore } from "./stores/npcFolderStore";
 import { useNpcStore } from "./stores/npcDataStore";
 import Explorer from "../../common/Explorer";
 
@@ -17,14 +17,14 @@ const NpcExplorer = ({ campaignNpcs, handleToggleNpc }) => {
     setShowAllFolders,
   } = useNpcFiltersStore();
   const {
-    npcFolders,
+    folders,
     prepareRenameFolder,
     prepareDeleteFolder,
     isNewFolderDialogOpen,
     setIsNewFolderDialogOpen,
     createFolder,
-    newNpcFolderName,
-    setNewNpcFolderName,
+    newFolderName,
+    setNewFolderName,
     isRenameFolderDialogOpen,
     setIsRenameFolderDialogOpen,
     setFolderToRename,
@@ -36,7 +36,12 @@ const NpcExplorer = ({ campaignNpcs, handleToggleNpc }) => {
     cancelDeleteFolder,
     moveNpcToFolder,
     getFolderName,
-  } = useNpcFoldersStore();
+  } = useFoldersStore();
+
+  const onFolderDelete = async () => {
+    await confirmDeleteFolder();
+    setSelectedNpcFolderId(null);
+  }
 
   // Initialize viewMode from localStorage or default to "grid"
   const [viewMode, setViewMode] = useState(() => {
@@ -85,7 +90,7 @@ const NpcExplorer = ({ campaignNpcs, handleToggleNpc }) => {
 
   return (
     <Explorer
-      folders={npcFolders}
+      folders={folders}
       selectedFolderId={selectedNpcFolderId}
       setSelectedFolderId={setSelectedNpcFolderId}
       showAllFolders={showAllFolders}
@@ -105,8 +110,8 @@ const NpcExplorer = ({ campaignNpcs, handleToggleNpc }) => {
       itemLabels={itemLabels}
       maxFolderNameLength = {50}
       isNewFolderDialogOpen = {isNewFolderDialogOpen}
-      newFolderName = {newNpcFolderName}
-      setNewFolderName = {setNewNpcFolderName}
+      newFolderName = {newFolderName}
+      setNewFolderName = {setNewFolderName}
       createFolder = {createFolder}
       isRenameFolderDialogOpen = {isRenameFolderDialogOpen}
       setIsRenameFolderDialogOpen = {setIsRenameFolderDialogOpen}
@@ -115,7 +120,7 @@ const NpcExplorer = ({ campaignNpcs, handleToggleNpc }) => {
       setRenamedFolderName = {setRenamedFolderName}
       confirmRenameFolder = {confirmRenameFolder}
       isDeleteFolderDialogOpen = {isDeleteFolderDialogOpen}
-      confirmDeleteFolder = {confirmDeleteFolder}
+      confirmDeleteFolder = {onFolderDelete}
       cancelDeleteFolder = {cancelDeleteFolder}
       getFolderName = {getFolderName}
     />

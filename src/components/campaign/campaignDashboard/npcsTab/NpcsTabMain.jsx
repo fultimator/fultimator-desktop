@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Grid, Paper } from "@mui/material";
 import {useParams} from 'react-router-dom';
+import {useFoldersStore} from '../../stores/folderStore.js';
 import NpcsTabHeader from "./NpcsTabHeader";
 import SearchbarFilter from "./SearchbarFilter";
 import LinkNpcDialog from "./LinkNpcDialog";
@@ -11,7 +12,6 @@ import NpcListError from "./NpcListError";
 import FeedbackSnackbar from "./FeedbackSnackbar";
 import useCampaignNpcs from "./hooks/useCampaignNpcs";
 import { useNpcStore } from "./stores/npcDataStore";
-import { useNpcFoldersStore } from "./stores/npcFolderStore";
 import {useNpcDialogsStore} from "./stores/npcDialogsStore";
 import NpcExplorer from "./NpcExplorer";
 
@@ -38,10 +38,9 @@ const NpcsTabMain = () => {
 
   const {
     setCampaignId: setFoldersCampaignId,
-    fetchFolders,
     setLoadNpcs,
     setShowSnackbar,
-  } = useNpcFoldersStore();
+  } = useFoldersStore();
 
   const {
     // Dialog states
@@ -62,11 +61,9 @@ const NpcsTabMain = () => {
     setFoldersCampaignId(campaignId);
     setLoadNpcs(() => initializeNpcs(campaignId));
     setShowSnackbar(showSnackbar);
-    fetchFolders();
   }, [
     campaignId,
     setFoldersCampaignId,
-    fetchFolders,
     setLoadNpcs,
     showSnackbar,
     setShowSnackbar,

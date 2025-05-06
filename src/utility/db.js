@@ -18,6 +18,7 @@ export const NOTE_STORE_NAME = "noteStore";
 export const LOCATION_STORE_NAME = "locationStore";
 export const NPC_CAMPAIGN_STORE_NAME = "npcCampaign";
 export const NPC_FOLDER_STORE_NAME = "npcFolderStore";
+export const FOLDER_STORE_NAME = "folderStore";
 
 // Promise that resolves with the database instance
 export const dbPromise = openDB(DB_NAME, DB_VERSION, {
@@ -91,6 +92,8 @@ export const dbPromise = openDB(DB_NAME, DB_VERSION, {
         });
         noteStore.createIndex("createdAt", "createdAt", { unique: false });
         noteStore.createIndex("modifiedAt", "modifiedAt", { unique: false });
+        noteStore.createIndex("folderId", "folderId", { unique: false });
+        noteStore.createIndex("campaignIdFolderId", ["campaignId", "folderId"], { unique: false });
       }
 
       if (!db.objectStoreNames.contains(LOCATION_STORE_NAME)) {
@@ -105,6 +108,8 @@ export const dbPromise = openDB(DB_NAME, DB_VERSION, {
         locationStore.createIndex("parentLocationId", "parentLocationId", {
           unique: false,
         });
+        locationStore.createIndex("folderId", "folderId", { unique: false });
+        locationStore.createIndex("campaignIdFolderId", ["campaignId", "folderId"], { unique: false });
       }
       if (!db.objectStoreNames.contains(NPC_FOLDER_STORE_NAME)) {
         const folderStore = db.createObjectStore(NPC_FOLDER_STORE_NAME, {
@@ -129,6 +134,17 @@ export const dbPromise = openDB(DB_NAME, DB_VERSION, {
         npcCampaignStore.createIndex("folderId", "folderId", { unique: false });
         console.log("Created 'npcCampaign' store.");
       }
+
+      if (!db.objectStoreNames.contains(FOLDER_STORE_NAME)) {
+        const folderStore = db.createObjectStore(FOLDER_STORE_NAME, {
+          keyPath: "id",
+          autoIncrement: true,
+        });
+        folderStore.createIndex("campaignId", "campaignId", { unique: false });
+        folderStore.createIndex("name", "name", { unique: false });
+        folderStore.createIndex("parentId", "parentId", { unique: false }); // Index parentId
+        console.log("Created 'folderStore' store.");
+      }
     }
   },
 });
@@ -142,4 +158,5 @@ export * from "./db/session";
 export * from "./db/note";
 export * from "./db/location";
 export * from "./db/relationship";
+export * from "./db/folder";
 export * from "./db/npcFolder";
