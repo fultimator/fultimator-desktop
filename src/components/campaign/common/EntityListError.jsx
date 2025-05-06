@@ -1,10 +1,7 @@
 import React from "react";
 import { Alert, Button } from "@mui/material";
-import { useNpcStore } from "./stores/npcDataStore";
 
-const NpcListError = () => {
-
-  const {loadError, loadNpcs} = useNpcStore();
+const EntityListError = ({retry, loadError}) => {
 
   return (
     <Alert severity="error" sx={{ my: 2 }}>
@@ -12,7 +9,7 @@ const NpcListError = () => {
       <Button
         color="inherit"
         size="small"
-        onClick={() => loadNpcs()}
+        onClick={() => retry()}
         sx={{ ml: 2 }}
       >
         Retry
@@ -21,4 +18,4 @@ const NpcListError = () => {
   );
 };
 
-export default NpcListError;
+export default EntityListError;

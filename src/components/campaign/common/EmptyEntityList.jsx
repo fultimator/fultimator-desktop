@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { Link as LinkIcon } from "@mui/icons-material";
 
-const EmptyNpcsList = ({ handleAddExistingNpc }) => {
+const EmptyEntityList = ({ type, handleAdd }) => {
   return (
     <Box
       sx={{
@@ -15,22 +15,22 @@ const EmptyNpcsList = ({ handleAddExistingNpc }) => {
       }}
     >
       <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
-        No NPCs in this campaign yet
+        No {type}s in this campaign yet
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Add NPCs to bring your campaign world to life
+        Add {type}s to bring your campaign world to life
       </Typography>
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
         <Button
           variant="contained"
           startIcon={<LinkIcon />}
-          onClick={handleAddExistingNpc}
+          onClick={handleAdd}
         >
-          Link Existing NPC
+          Link Existing {type}
         </Button>
       </Box>
     </Box>
   );
 };
 
-export default EmptyNpcsList;
+export default EmptyEntityList;

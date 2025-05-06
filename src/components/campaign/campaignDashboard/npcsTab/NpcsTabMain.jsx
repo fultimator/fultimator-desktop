@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { Grid, Paper } from "@mui/material";
 import {useParams} from 'react-router-dom';
+import EmptyEntityList from '../../common/EmptyEntityList.jsx';
+import EntityListError from '../../common/EntityListError.jsx';
+import EntityListLoading from '../../common/EntityListLoading.jsx';
 import {useFoldersStore} from '../../stores/folderStore.js';
 import NpcsTabHeader from "./NpcsTabHeader";
 import SearchbarFilter from "./SearchbarFilter";
 import LinkNpcDialog from "./LinkNpcDialog";
 import SimpleNpcDialogEdit from "./SimpleNpcDialogEdit";
-import EmptyNpcsList from "./EmptyNpcsList";
-import NpcListLoading from "./NpcListLoading";
-import NpcListError from "./NpcListError";
 import FeedbackSnackbar from "./FeedbackSnackbar";
 import useCampaignNpcs from "./hooks/useCampaignNpcs";
 import { useNpcStore } from "./stores/npcDataStore";
@@ -37,6 +37,7 @@ const NpcsTabMain = () => {
   } = useNpcStore();
 
   const {
+    loadNpcs,
     setCampaignId: setFoldersCampaignId,
     setLoadNpcs,
     setShowSnackbar,
@@ -88,21 +89,21 @@ const NpcsTabMain = () => {
         {/* Loading state */}
         {isLoading && (
           <Grid item xs={12}>
-            <NpcListLoading />
+            <EntityListLoading type={'NPC'} />
           </Grid>
         )}
 
         {/* Error state */}
         {loadError && (
           <Grid item xs={12}>
-            <NpcListError />
+            <EntityListError loadError={loadError} retry={loadNpcs} />
           </Grid>
         )}
 
         {/* Empty state */}
         {!isLoading && !loadError && campaignNpcs.length === 0 && (
           <Grid item xs={12}>
-            <EmptyNpcsList handleAddExistingNpc={handleAddExistingNpc} />
+            <EmptyEntityList handleAdd={handleAddExistingNpc} type={'NPC'}></EmptyEntityList>
           </Grid>
         )}
 
