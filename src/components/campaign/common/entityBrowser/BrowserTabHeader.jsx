@@ -1,6 +1,5 @@
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
-import { Link as LinkIcon, Add as AddIcon } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
 
 const BrowserTabHeader = ({ title, actions }) => {
   return (
