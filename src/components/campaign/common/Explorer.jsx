@@ -516,6 +516,7 @@ const Explorer = ({
                 {/* Content List - displays items in grid or list view */}
                 <ContentList
                   items={items}
+                  itemLabels={itemLabels}
                   viewMode={viewMode}
                   selectedItems={selectedItems}
                   selectionMode={selectionMode}
