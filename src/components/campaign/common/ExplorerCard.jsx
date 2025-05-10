@@ -216,6 +216,7 @@ const ExplorerCard = ({
           onMove={() => onMove && onMove(item.id)}
           isSimple={isSimple}
           additionalActions={additionalMenuItems}
+          mode="card"
         />
       </StyledCard>
     </React.Fragment>

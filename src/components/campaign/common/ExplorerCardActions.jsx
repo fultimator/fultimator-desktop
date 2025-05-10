@@ -21,40 +21,59 @@ import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 // Standardized icon size
 const ICON_SIZE = 18;
 
-const ActionsContainer = styled(Box)(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: theme.spacing(0.75, 1),
-  backgroundColor:
-    theme.palette.mode === "dark"
-      ? theme.palette.grey[900]
-      : theme.palette.grey[50],
-  borderTop: `1px solid ${theme.palette.divider}`,
-}));
+const ActionsContainer = styled(Box)(({ theme, mode }) => {
+  if (mode === 'list') {
+    return {
+      display: "flex",
+      alignItems: "center",
+    };
+  } else {
+    return {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: theme.spacing(0.75, 1),
+      backgroundColor:
+        theme.palette.mode === "dark"
+          ? theme.palette.grey[900]
+          : theme.palette.grey[50],
+      borderTop: `1px solid ${theme.palette.divider}`,
+    }
+  }
+});
 
 const ActionButtonsGroup = styled(Box)(({ theme }) => ({
   display: "flex",
   gap: theme.spacing(0.5),
 }));
 
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
-  padding: 6,
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor:
-    theme.palette.mode === "dark"
-      ? "rgba(255, 255, 255, 0.05)"
-      : "rgba(0, 0, 0, 0.02)",
-  "&:hover": {
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? "rgba(255, 255, 255, 0.1)"
-        : "rgba(0, 0, 0, 0.05)",
-  },
-  "& svg": {
-    fontSize: ICON_SIZE,
-  },
-}));
+const StyledIconButton = styled(IconButton)(({ theme, mode }) => {
+  if (mode === 'list') {
+    return {
+      "& svg": {
+        fontSize: ICON_SIZE,
+      },
+    };
+  } else {
+    return {
+      padding: 6,
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor:
+        theme.palette.mode === "dark"
+          ? "rgba(255, 255, 255, 0.05)"
+          : "rgba(0, 0, 0, 0.02)",
+      "&:hover": {
+        backgroundColor:
+          theme.palette.mode === "dark"
+            ? "rgba(255, 255, 255, 0.1)"
+            : "rgba(0, 0, 0, 0.05)",
+      },
+      "& svg": {
+        fontSize: ICON_SIZE,
+      },
+    };
+  }
+});
 
 const ExplorerCardActions = ({
   itemId,
@@ -67,6 +86,7 @@ const ExplorerCardActions = ({
   onMove,
   additionalActions,
   isSimple,
+  mode,
 }) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -83,10 +103,11 @@ const ExplorerCardActions = ({
   };
 
   return (
-    <ActionsContainer onClick={(e) => e.stopPropagation()}>
+    <ActionsContainer mode={mode} onClick={(e) => e.stopPropagation()}>
       <ActionButtonsGroup>
         <Tooltip title="Edit NPC" arrow>
           <StyledIconButton
+            mode={mode}
             onClick={(e) => {
               e.stopPropagation();
               onEdit();
@@ -99,6 +120,7 @@ const ExplorerCardActions = ({
 
         <Tooltip title="Notes" arrow>
           <StyledIconButton
+            mode={mode}
             onClick={(e) => {
               e.stopPropagation();
               onNotes();
@@ -112,6 +134,7 @@ const ExplorerCardActions = ({
         {!isSimple && (
           <Tooltip title="View Details" arrow>
             <StyledIconButton
+              mode={mode}
               onClick={(e) => {
                 e.stopPropagation();
                 onDetails(e);
@@ -126,6 +149,7 @@ const ExplorerCardActions = ({
 
       <Tooltip title="More options" arrow>
         <StyledIconButton
+          mode={mode}
           aria-label="more options"
           id={`item-menu-button-${itemId}`}
           aria-controls={menuOpen ? `item-menu-${itemId}` : undefined}
