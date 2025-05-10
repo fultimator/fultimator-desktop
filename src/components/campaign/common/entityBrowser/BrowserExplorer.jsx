@@ -9,6 +9,7 @@ const BrowserExplorer = ({
   itemListComponent,
   unlinkMultipleItems,
   handleMoveItem,
+  handleUnlinkItems,
   itemLabels = {
    singular: "item",
    plural: "items",
@@ -92,6 +93,7 @@ const BrowserExplorer = ({
       setViewMode={setViewMode}
       items={items}
       setIsNewFolderDialogOpen={setIsNewFolderDialogOpen}
+      handleUnlinkItem={handleUnlinkItems}
       moveItemToFolder={handleMoveItem}
       unlinkMultipleItems={unlinkMultipleItems}
       prepareRenameFolder={prepareRenameFolder}

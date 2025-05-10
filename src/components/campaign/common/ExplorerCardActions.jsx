@@ -8,17 +8,11 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  ToggleButtonGroup,
-  ToggleButton,
-  Typography,
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import FolderIcon from "@mui/icons-material/Folder";
-import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
-import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { LinkOff, Delete as DeleteIcon } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -62,44 +56,20 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-  "& .MuiToggleButtonGroup-grouped": {
-    margin: 0,
-    padding: theme.spacing(0.5),
-    border: 0,
-    "&:not(:first-of-type)": {
-      borderRadius: theme.shape.borderRadius,
-    },
-    "&:first-of-type": {
-      borderRadius: theme.shape.borderRadius,
-    },
-  },
-}));
-
-const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius,
-  "&.Mui-selected": {
-    backgroundColor: "transparent",
-  },
-  "& svg": {
-    fontSize: ICON_SIZE,
-  },
-}));
-
-const NpcCardActions = ({
-  npcId,
-  attitude = "neutral",
+const ExplorerCardActions = ({
+  itemId,
+  editText = 'Edit',
+  deleteText = 'Delete',
   onEdit,
   onUnlink,
   onNotes,
   onDetails,
   onMove,
-  onSetAttitude,
+  additionalActions,
   isSimple,
 }) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [currentAttitude, setCurrentAttitude] = useState(attitude);
   const menuOpen = Boolean(anchorEl);
 
   const handleMenuClick = (event) => {
@@ -110,34 +80,6 @@ const NpcCardActions = ({
   const handleMenuClose = (event) => {
     event.stopPropagation();
     setAnchorEl(null);
-  };
-
-  const handleAttitudeChange = (event, newAttitude) => {
-    if (newAttitude !== null) {
-      setCurrentAttitude(newAttitude);
-      onSetAttitude(newAttitude);
-    }
-  };
-
-  const getAttitudeColor = (attitudeValue) => {
-    const isSelected = currentAttitude === attitudeValue;
-
-    switch (attitudeValue) {
-      case "friendly":
-        return isSelected
-          ? theme.palette.success.main
-          : theme.palette.text.disabled;
-      case "neutral":
-        return isSelected
-          ? theme.palette.secondary.main
-          : theme.palette.text.disabled;
-      case "hostile":
-        return isSelected
-          ? theme.palette.error.main
-          : theme.palette.text.disabled;
-      default:
-        return theme.palette.text.disabled;
-    }
   };
 
   return (
@@ -185,8 +127,8 @@ const NpcCardActions = ({
       <Tooltip title="More options" arrow>
         <StyledIconButton
           aria-label="more options"
-          id={`npc-menu-button-${npcId}`}
-          aria-controls={menuOpen ? `npc-menu-${npcId}` : undefined}
+          id={`item-menu-button-${itemId}`}
+          aria-controls={menuOpen ? `item-menu-${itemId}` : undefined}
           aria-expanded={menuOpen ? "true" : undefined}
           aria-haspopup="true"
           onClick={(e) => handleMenuClick(e)}
@@ -197,9 +139,9 @@ const NpcCardActions = ({
       </Tooltip>
 
       <Menu
-        id={`npc-menu-${npcId}`}
+        id={`item-menu-${itemId}`}
         MenuListProps={{
-          "aria-labelledby": `npc-menu-button-${npcId}`,
+          "aria-labelledby": `item-menu-button-${itemId}`,
           dense: true,
         }}
         anchorEl={anchorEl}
@@ -225,13 +167,13 @@ const NpcCardActions = ({
           <ListItemIcon>
             <EditIcon sx={{ fontSize: ICON_SIZE }} />
           </ListItemIcon>
-          <ListItemText>Edit NPC</ListItemText>
+          <ListItemText>{editText}</ListItemText>
         </MenuItem>
 
         <MenuItem
-          onClick={() => {
+          onClick={(e) => {
             onUnlink();
-            handleMenuClose();
+            handleMenuClose(e);
           }}
         >
           <ListItemIcon>
@@ -252,7 +194,7 @@ const NpcCardActions = ({
             )}
           </ListItemIcon>
           <ListItemText>
-            {isSimple ? "Delete NPC" : "Unlink from Campaign"}
+            {deleteText}
           </ListItemText>
         </MenuItem>
 
@@ -268,53 +210,18 @@ const NpcCardActions = ({
           <ListItemText>Move to Folder</ListItemText>
         </MenuItem>
 
-        <Divider sx={{ my: 1 }} />
+        {
+          additionalActions && (
+            <>
+              <Divider sx={{ my: 1 }} />
+              {additionalActions}
+            </>
+          )
+        }
 
-        <Box sx={{ px: 1, py: 0.5 }}>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ pl: 1, mb: 1, fontSize: "0.75rem" }}
-          >
-            NPC ATTITUDE
-          </Typography>
-
-          <StyledToggleButtonGroup
-            value={currentAttitude}
-            exclusive
-            onChange={handleAttitudeChange}
-            aria-label="NPC attitude"
-            size="small"
-            fullWidth
-          >
-            <StyledToggleButton value="friendly" aria-label="friendly attitude">
-              <Tooltip title="Friendly" arrow>
-                <SentimentSatisfiedAltIcon
-                  sx={{ color: getAttitudeColor("friendly") }}
-                />
-              </Tooltip>
-            </StyledToggleButton>
-
-            <StyledToggleButton value="neutral" aria-label="neutral attitude">
-              <Tooltip title="Neutral" arrow>
-                <SentimentNeutralIcon
-                  sx={{ color: getAttitudeColor("neutral") }}
-                />
-              </Tooltip>
-            </StyledToggleButton>
-
-            <StyledToggleButton value="hostile" aria-label="hostile attitude">
-              <Tooltip title="Hostile" arrow>
-                <SentimentVeryDissatisfiedIcon
-                  sx={{ color: getAttitudeColor("hostile") }}
-                />
-              </Tooltip>
-            </StyledToggleButton>
-          </StyledToggleButtonGroup>
-        </Box>
       </Menu>
     </ActionsContainer>
   );
 };
 
-export default NpcCardActions;
+export default ExplorerCardActions;
