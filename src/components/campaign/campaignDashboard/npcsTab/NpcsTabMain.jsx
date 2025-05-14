@@ -1,19 +1,18 @@
+import {Add as AddIcon, Link as LinkIcon} from '@mui/icons-material';
 import React, { useEffect } from "react";
-import { Grid, Paper } from "@mui/material";
+import {Button} from '@mui/material';
 import {useParams} from 'react-router-dom';
-import NpcsTabHeader from "./NpcsTabHeader";
-import SearchbarFilter from "./SearchbarFilter";
+import BrowserMain from '../../common/entityBrowser/BrowserMain.jsx';
+import EntityListError from '../../common/entityBrowser/EntityListError.jsx';
+import {useFoldersStore} from '../../stores/folderStore.js';
+import NPCsSearchFilters from "./NPCsSearchFilters.jsx";
 import LinkNpcDialog from "./LinkNpcDialog";
 import SimpleNpcDialogEdit from "./SimpleNpcDialogEdit";
-import EmptyNpcsList from "./EmptyNpcsList";
-import NpcListLoading from "./NpcListLoading";
-import NpcListError from "./NpcListError";
-import FeedbackSnackbar from "./FeedbackSnackbar";
 import useCampaignNpcs from "./hooks/useCampaignNpcs";
 import { useNpcStore } from "./stores/npcDataStore";
-import { useNpcFoldersStore } from "./stores/npcFolderStore";
 import {useNpcDialogsStore} from "./stores/npcDialogsStore";
 import NpcExplorer from "./NpcExplorer";
+import {useNpcFiltersStore} from './stores/npcFiltersStore.js';
 
 const NpcsTabMain = () => {
   const {campaignId} = useParams();
@@ -37,11 +36,22 @@ const NpcsTabMain = () => {
   } = useNpcStore();
 
   const {
+    loadNpcs,
     setCampaignId: setFoldersCampaignId,
-    fetchFolders,
     setLoadNpcs,
     setShowSnackbar,
-  } = useNpcFoldersStore();
+  } = useFoldersStore();
+
+  const {
+    filterSearchText,
+    setNpcSortOrder,
+    setNpcAttitudeFilter,
+    setShowVillainsOnly,
+    setNpcRank,
+    setNpcSpecies,
+    setFilterSearchText,
+    setNpcSortDirection,
+  } = useNpcFiltersStore();
 
   const {
     // Dialog states
@@ -62,87 +72,95 @@ const NpcsTabMain = () => {
     setFoldersCampaignId(campaignId);
     setLoadNpcs(() => initializeNpcs(campaignId));
     setShowSnackbar(showSnackbar);
-    fetchFolders();
   }, [
     campaignId,
     setFoldersCampaignId,
-    fetchFolders,
     setLoadNpcs,
     showSnackbar,
     setShowSnackbar,
     initializeNpcs
   ]);
 
+  const clearAllFilters = () => {
+    setFilterSearchText("");
+    setNpcSortOrder("name");
+    setNpcSortDirection("asc");
+    setNpcAttitudeFilter("all");
+    setShowVillainsOnly(false);
+    setNpcRank("");
+    setNpcSpecies("");
+  };
+
   return (
-    <Paper elevation={3} sx={{ p: 3 }}>
-      <Grid container spacing={1}>
-        {/* Header */}
-        <Grid item xs={12}>
-          <NpcsTabHeader onCreateSimpleNpc={handleOpenSimpleNpcDialogEdit} onLinkNpc={handleAddExistingNpc} />
-        </Grid>
-
-        {/* Search, sort, and filter controls */}
-        {campaignNpcs.length > 0 && (
-          <Grid item xs={12}>
-            <SearchbarFilter />
-          </Grid>
-        )}
-
-        {/* Loading state */}
-        {isLoading && (
-          <Grid item xs={12}>
-            <NpcListLoading />
-          </Grid>
-        )}
-
-        {/* Error state */}
-        {loadError && (
-          <Grid item xs={12}>
-            <NpcListError />
-          </Grid>
-        )}
-
-        {/* Empty state */}
-        {!isLoading && !loadError && campaignNpcs.length === 0 && (
-          <Grid item xs={12}>
-            <EmptyNpcsList handleAddExistingNpc={handleAddExistingNpc} />
-          </Grid>
-        )}
-
-        {/* Display NPCs or Empty State for the current filter */}
-        {!isLoading && !loadError && campaignNpcs.length > 0 && (
+    <>
+      <BrowserMain
+        headerTitle="Campaign NPCs"
+        headerActions={
           <>
-            <NpcExplorer
-              campaignNpcs={campaignNpcs}
-              handleToggleNpc={handleToggleNpc}
-            />
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={handleOpenSimpleNpcDialogEdit}
+              sx={{ mr: 1 }}
+            >
+              Add Simplified NPC
+            </Button>
+
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<LinkIcon />}
+              onClick={handleAddExistingNpc}
+              sx={{ mr: 1 }}
+            >
+              Link NPC
+            </Button>
           </>
-        )}
+        }
+        emptyListAction={handleAddExistingNpc}
+        listErrorRetry={loadNpcs}
+        loadError={loadError}
+        isLoading={isLoading}
+        items={campaignNpcs}
+        snackbar={snackbar}
+        handleSnackbarClose={handleSnackbarClose}
+        listErrorComponent={
+          <EntityListError
+            onRetry={loadNpcs}
+            errorMessage={loadError}
+          />
+        }
+        explorerComponent={
+          <NpcExplorer
+            campaignNpcs={campaignNpcs}
+            handleToggleNpc={handleToggleNpc}
+          />
+        }
+        searchText={filterSearchText}
+        handleSearchTextUpdate={setFilterSearchText}
+        handleFiltersClearAll={clearAllFilters}
+        searchFiltersComponent={<NPCsSearchFilters />}
+      ></BrowserMain>
 
-        {/* Link NPC Dialog */}
-       <LinkNpcDialog
-          open={isLinkNpcDialogOpen}
-          handleClose={handleCloseLinkDialog}
-          searchText={linkNpcSearchText}
-          setSearchText={setLinkNpcSearchText}
-          filteredNpcs={filteredNpcsForDialog}
-          associatedNpcIds={associatedNpcIds}
-          handleToggleNpc={handleToggleNpc}
-        />
-        <SimpleNpcDialogEdit
-          open={isSimpleNpcDialogEditOpen}
-          onClose={handleCloseSimpleNpcDialogEdit}
-          onSubmit={handleCreateSimpleNpc}
-          initialNpc={simpleNpcItem}
-        />
 
-        {/* Feedback snackbar */}
-        <FeedbackSnackbar
-          snackbar={snackbar}
-          handleSnackbarClose={handleSnackbarClose}
-        />
-      </Grid>
-    </Paper>
+      {/* Link NPC Dialog */}
+      <LinkNpcDialog
+        open={isLinkNpcDialogOpen}
+        handleClose={handleCloseLinkDialog}
+        searchText={linkNpcSearchText}
+        setSearchText={setLinkNpcSearchText}
+        filteredNpcs={filteredNpcsForDialog}
+        associatedNpcIds={associatedNpcIds}
+        handleToggleNpc={handleToggleNpc}
+      />
+      <SimpleNpcDialogEdit
+        open={isSimpleNpcDialogEditOpen}
+        onClose={handleCloseSimpleNpcDialogEdit}
+        onSubmit={handleCreateSimpleNpc}
+        initialNpc={simpleNpcItem}
+      />
+    </>
   );
 };
 

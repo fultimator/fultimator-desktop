@@ -21,6 +21,7 @@ import { Box, Grid, Stack } from "@mui/material";
  */
 const ContentList = ({
   items,
+  itemLabels,
   viewMode,
   selectedItems,
   selectionMode,
@@ -74,6 +75,7 @@ const ContentList = ({
         <EmptyListComponent
           currentFolder={currentFolder}
           filterValue={filterValue}
+          itemLabels={itemLabels}
         />
       )}
     </Box>

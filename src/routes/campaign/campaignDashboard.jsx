@@ -19,6 +19,7 @@ import {useNoteStore} from '../../components/campaign/campaignDashboard/notesTab
 import {useNpcStore} from '../../components/campaign/campaignDashboard/npcsTab/stores/npcDataStore.js';
 import {useSessionStore} from '../../components/campaign/campaignDashboard/sessionsTab/stores/sessionsStore.js';
 import {useCampaignStore} from '../../components/campaign/stores/campaignStore.js';
+import {useFoldersStore} from '../../components/campaign/stores/folderStore.js';
 import Layout from "../../components/Layout";
 import LoadingPage from "../../components/common/LoadingPage";
 import OverviewTab from "../../components/campaign/campaignDashboard/OverviewTab";
@@ -61,6 +62,7 @@ const CampaignDashboard = () => {
   const noteStore = useNoteStore();
   const sessionStore = useSessionStore();
   const campaignStore = useCampaignStore();
+  const folderStore = useFoldersStore();
   const campaign = campaignStore.campaign;
 
   // Fetch campaign data
@@ -83,6 +85,8 @@ const CampaignDashboard = () => {
         npcStore.setCampaignId(+campaignId);
         noteStore.setCampaignId(+campaignId);
         sessionStore.setCampaignId(+campaignId);
+        folderStore.setCampaignId(+campaignId);
+        await folderStore.fetchFolders();
 
 
         // Update last played timestamp

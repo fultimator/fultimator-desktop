@@ -19,6 +19,7 @@ import {
   Menu as MenuIcon,
 } from "@mui/icons-material";
 import FolderIcon from "@mui/icons-material/Folder";
+import {useFoldersStore} from '../stores/folderStore.js';
 import FolderBreadcrumbs from "./FolderBreadcrumbs";
 import FolderSidebar from "./FolderSidebar";
 import MoveFolderDialog from "./MoveFolderDialog";
@@ -37,7 +38,7 @@ import DeleteFolderDialogComponent from "./DeleteFolderDialogComponent";
  * Provides a UI for browsing, selecting, moving, and managing items within folders.
  *
  * @param {Object} props - Component props
- * @param {Array} props.folders - Hierarchical folder structure
+ * @param {Array|null} props.types - The types of the folder
  * @param {string|null} props.selectedFolderId - ID of currently selected folder
  * @param {Function} props.setSelectedFolderId - Function to update selected folder
  * @param {boolean} props.showAllFolders - Whether to show all folders or only the current folder tree
@@ -111,8 +112,6 @@ import DeleteFolderDialogComponent from "./DeleteFolderDialogComponent";
  * @returns {React.ReactElement} The Explorer component
  */
 const Explorer = ({
-  // Folder structure props
-  folders = [],
   selectedFolderId = null,
   setSelectedFolderId,
   showAllFolders = false,
@@ -205,6 +204,7 @@ const Explorer = ({
   const { t } = useTranslate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { folders } = useFoldersStore()
 
   // Local state management
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -516,6 +516,7 @@ const Explorer = ({
                 {/* Content List - displays items in grid or list view */}
                 <ContentList
                   items={items}
+                  itemLabels={itemLabels}
                   viewMode={viewMode}
                   selectedItems={selectedItems}
                   selectionMode={selectionMode}

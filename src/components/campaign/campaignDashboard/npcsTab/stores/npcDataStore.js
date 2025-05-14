@@ -4,7 +4,6 @@ import {
   getNpcs,
   associateNpcWithCampaign,
   disassociateNpcFromCampaign,
-  getNpcFoldersForCampaign,
   addCampaignNpc,
   deleteCampaignNpc,
 } from "../../../../../utility/db";
@@ -70,15 +69,6 @@ export const useNpcStore = create((set, get) => ({
       // Load all NPCs
       const allNpcsList = await getNpcs();
       set({ allNpcs: allNpcsList });
-
-      // Load folders for the campaign
-      try {
-        const foldersList = await getNpcFoldersForCampaign(campaignId);
-        set({ npcFolders: foldersList });
-      } catch (folderErr) {
-        console.error("Error loading NPC folders:", folderErr);
-        set({ loadError: t("npc_folders_load_error") });
-      }
 
       return {
         campaignNpcs: relatedNpcs,
