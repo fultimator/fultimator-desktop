@@ -1,7 +1,7 @@
 import { openDB } from 'idb';
 
 const DB_NAME = 'fultimatorDB';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const NPC_STORE_NAME = 'npcPersonal';
 const PC_STORE_NAME = 'pcPersonal';
 const ENCOUNTER_STORE_NAME = 'encounterStore';
@@ -10,14 +10,16 @@ const dbPromise = openDB(DB_NAME, DB_VERSION, {
   upgrade(db, oldVersion, newVersion) {
     console.log(`Upgrading DB from version ${oldVersion} to ${newVersion}`);
 
-    if (oldVersion < 1) {
-      db.createObjectStore("npcPersonal", { keyPath: "id", autoIncrement: true });
-      db.createObjectStore("pcPersonal", { keyPath: "id", autoIncrement: true });
+    if (!db.objectStoreNames.contains(NPC_STORE_NAME)) {
+      db.createObjectStore(NPC_STORE_NAME, { keyPath: "id", autoIncrement: true });
     }
-    if (oldVersion < 2) {
-      if (!db.objectStoreNames.contains("encounterStore")) {
-        db.createObjectStore("encounterStore", { keyPath: "id", autoIncrement: true });
-      }
+
+    if (!db.objectStoreNames.contains(PC_STORE_NAME)) {
+      db.createObjectStore(PC_STORE_NAME, { keyPath: "id", autoIncrement: true });
+    }
+
+    if (!db.objectStoreNames.contains(ENCOUNTER_STORE_NAME)) {
+      db.createObjectStore(ENCOUNTER_STORE_NAME, { keyPath: "id", autoIncrement: true });
     }
   },
 });
